@@ -13,15 +13,15 @@ public class MedlineCitation {
     MeshHeadingList MeshHeadingListObject;
 
     @XmlElement(name = "PMID")
-    public String getPMID() {
+    public int getPMID() {
         return PMID;
     }
 
-    public void setPMID(String PMID) {
+    public void setPMID(int PMID) {
         this.PMID = PMID;
     }
 
-    private String PMID;
+    private int PMID;
     private String _Status;
     private String _Owner;
 
