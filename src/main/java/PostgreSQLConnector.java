@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PostgreSQLConnector {
 
     public void createTable() {
-        Connection connection = null;
-        Statement statement = null;
+        Connection connection;
+        Statement statement;
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager
@@ -19,11 +19,11 @@ public class PostgreSQLConnector {
 
             statement = connection.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS PAPERS" +
-                    "(PMID INT PRIMARY KEY         NOT NULL," +
-                    " ARTICLE_TITLE  VARCHAR(1000)  NOT NULL, " +
-                    " FIRST_AUTHOR   VARCHAR(500)   NOT NULL, " +
-                    " PUBLISHER      VARCHAR(500), " +
-                    " PUBLISHED_DATE DATE, " +
+                    "(PMID           INT PRIMARY KEY NOT NULL," +
+                    " ARTICLE_TITLE  VARCHAR(1000)," +
+                    " FIRST_AUTHOR   VARCHAR(500)," +
+                    " PUBLISHER      VARCHAR(500)," +
+                    " PUBLISHED_DATE DATE," +
                     " UPLOADER       VARCHAR(100))";
             statement.executeUpdate(sql);
             statement.close();
@@ -36,7 +36,7 @@ public class PostgreSQLConnector {
     }
 
     public void insertIntoPapers(final PubmedArticleSet pubmedArticleSet) {
-        Connection connection = null;
+        Connection connection;
         AtomicInteger total = new AtomicInteger();
         try {
             Class.forName("org.postgresql.Driver");
@@ -49,7 +49,7 @@ public class PostgreSQLConnector {
             String sql = "INSERT INTO PAPERS (PMID, ARTICLE_TITLE, FIRST_AUTHOR, PUBLISHER, PUBLISHED_DATE, UPLOADER) "
                     + "VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            pubmedArticleSet.getPubmedArticles().stream().forEach(a -> {
+            pubmedArticleSet.getPubmedArticles().forEach(a -> {
                 try {
                     String publishedDate = a.getMedlineCitation().getDateCompleted().getYear() + "-" + a.getMedlineCitation().getDateCompleted().getMonth() + "-" + a.getMedlineCitation().getDateCompleted().getDay();
                     preparedStatement.setInt(1, a.getMedlineCitation().getPMID());
