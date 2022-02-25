@@ -17,7 +17,7 @@ public class PubMedConversion {
             PubmedArticleSet pubmedArticleSet = (PubmedArticleSet) jaxbUnmarshaller.unmarshal(xmlFile);
             System.out.println(pubmedArticleSet);
             PostgreSQLConnector postgreSQLConnector = new PostgreSQLConnector();
-            postgreSQLConnector.establishConnection();
+            postgreSQLConnector.createTable();
             postgreSQLConnector.insertIntoPapers(pubmedArticleSet);
         } catch (JAXBException e) {
             e.printStackTrace();

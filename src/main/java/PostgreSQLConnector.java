@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class PostgreSQLConnector {
 
-    public void establishConnection() {
+    public void createTable() {
         Connection connection = null;
         Statement statement = null;
         try {
@@ -59,6 +59,7 @@ public class PostgreSQLConnector {
                     preparedStatement.setDate(5, java.sql.Date.valueOf(publishedDate));
                     preparedStatement.setString(6, "Venkat");
                     Boolean insert = preparedStatement.execute();
+                    System.out.println("Inserting PMID" + a.getMedlineCitation().getPMID());
                     finalConnection.commit();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -70,7 +71,7 @@ public class PostgreSQLConnector {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Records inserted successfully");
+        System.out.println("All Records inserted successfully");
     }
 }
 
