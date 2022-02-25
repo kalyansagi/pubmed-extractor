@@ -3,6 +3,7 @@ package main.java;
 import main.java.entities.PubmedArticleSet;
 
 import java.sql.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PostgreSQLConnector {
 
@@ -36,6 +37,7 @@ public class PostgreSQLConnector {
 
     public void insertIntoPapers(final PubmedArticleSet pubmedArticleSet) {
         Connection connection = null;
+        AtomicInteger total = new AtomicInteger();
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager
@@ -47,8 +49,6 @@ public class PostgreSQLConnector {
             String sql = "INSERT INTO PAPERS (PMID, ARTICLE_TITLE, FIRST_AUTHOR, PUBLISHER, PUBLISHED_DATE, UPLOADER) "
                     + "VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            Connection finalConnection = connection;
             pubmedArticleSet.getPubmedArticles().stream().forEach(a -> {
                 try {
                     String publishedDate = a.getMedlineCitation().getDateCompleted().getYear() + "-" + a.getMedlineCitation().getDateCompleted().getMonth() + "-" + a.getMedlineCitation().getDateCompleted().getDay();
@@ -58,9 +58,9 @@ public class PostgreSQLConnector {
                     preparedStatement.setString(4, a.getMedlineCitation().getArticle().getJournal().getTitle());
                     preparedStatement.setDate(5, java.sql.Date.valueOf(publishedDate));
                     preparedStatement.setString(6, "Venkat");
-                    Boolean insert = preparedStatement.execute();
+                    preparedStatement.execute();
                     System.out.println("Inserting PMID" + a.getMedlineCitation().getPMID());
-                    finalConnection.commit();
+                    total.getAndIncrement();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -71,7 +71,7 @@ public class PostgreSQLConnector {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("All Records inserted successfully");
+        System.out.println("Total " + total + " Records inserted successfully");
     }
 }
 
